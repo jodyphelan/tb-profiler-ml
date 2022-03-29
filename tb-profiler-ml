@@ -1,0 +1,34 @@
+#! /usr/bin/env python
+import sys
+import argparse
+import tb_profiler_ml as tpml
+
+def main_profile(args):
+    tpml.predict_with_model(args)
+
+def main_create_model(args):
+    tpml.create_model_file(args)
+
+
+parser = argparse.ArgumentParser(description='TBProfiler pipeline',formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--version', action='version', version="TBProfiler version %s" % tpml.__version__)
+subparsers = parser.add_subparsers(help="Task to perform")
+
+parser_sub = subparsers.add_parser('profile', help='Run whole profiling pipeline', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser_sub.add_argument('--model',type=str,help='Model class in pickle format',required = True)
+parser_sub.add_argument('--result',type=str,help='Model class in pickle format',required = True)
+parser_sub.add_argument('--outfile',type=str,help='Model class in pickle format',required = True)
+parser_sub.set_defaults(func=main_profile)
+
+parser_sub = subparsers.add_parser('create', help='Run whole profiling pipeline', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser_sub.add_argument('--models',type=str,nargs="+",help='Model class in pickle format',required = True)
+parser_sub.add_argument('--drugs',nargs="+",type=str,help='Model class in pickle format',required = True)
+parser_sub.add_argument('--variants',nargs="+",type=str,help='Model class in pickle format',required = True)
+parser_sub.add_argument('--outfile',type=str,help='Model class in pickle format',required = True)
+parser_sub.set_defaults(func=main_create_model)
+
+args = parser.parse_args()
+if vars(args)=={}:
+    parser.print_help(sys.stderr)
+else:
+    args.func(args)
